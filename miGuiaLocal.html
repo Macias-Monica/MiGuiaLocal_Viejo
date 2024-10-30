@@ -43,7 +43,8 @@
                         <div class="input-group">
                             <input type="text" class="form-control"
                                 placeholder="Busca tu negocio..."
-                                aria-label="buscar">
+                                aria-label="buscar"
+                                v-model="busqueda">
                             <span class="input-group-text">
                                 <i class="fas fa-search"></i>
                             </span>
@@ -80,6 +81,9 @@
                                 {{ negocio.nombreNegocio }}
                                 <span class="badge bg-primary ms-2">{{ negocio.categoria }}</span>
                             </h5>
+                            <div class="rating" @click="openModal(3,negocio.id)">
+                                <span v-for="star in 5" :key="star"  class="star" :class="{ 'filled': star <= negocio.calificacion }">★</span>
+                            </div>
                             <img :src="negocio.rutaImagenNegocio" class="card-img-top" :alt="negocio.nombreNegocio">
                             <h6 class="card-text">{{ negocio.domicilio }}</h6>
                             <h6 class="card-text">{{ negocio.telefono }}</h6>
@@ -350,6 +354,50 @@
                 </div>
             </div>
             <!-- Fin Modal Registro Negocio-->
+            <!--Modal de valoraciones, comentarios y/u opiniones-->
+
+            <div class="modal fade" id="valoracionesModal" tabindex="-1" aria-labelledby="valoracionesModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="valoracionesModalLabel">Comentarios</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    
+                        <div class="modal-body">
+                            <div>
+                                <label for="comentario" class="form-label">Tu comentario</label>
+                                <textarea class="form-control" v-model="nuevoComentario" rows="1" @keyup.enter="enviarValoracion"></textarea>
+                            </div>
+                            <div class="divider"></div>
+                            <div v-for="comentario in comentariosFiltrados" :key="comentario.id">
+                            
+                                <div class="row align-items-center mb-2"> 
+                                    <div class="col-auto"> 
+                                        <strong>
+                                            <span v-if="comentario.usuario">
+                                                {{ comentario.usuario }}
+                                            </span>
+                                            <span v-else>
+                                                <i class="fas fa-user-circle"></i> 
+                                            </span>
+                                        </strong>
+                                    </div>
+                                    <div class="col-auto"> 
+                                        <span v-for="star in 5" :key="star" class="star" :class="{ 'filled': star <= comentario.calificacion }">★</span>
+                                    </div>
+                                </div>                
+                                    <p>{{ comentario.comentarios}}</p>  
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--FIN Modal de valoraciones, comentarios y/u opiniones-->
 
         </div> <!-- Cierra el div con id="app" -->
 

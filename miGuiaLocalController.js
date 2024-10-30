@@ -5,6 +5,7 @@ new Vue({
     data: {
         negocios: [],
         categorias: [],
+        valoraciones: [],
         isDropdownVisible: false,
         isCompact: false,                                                                                                                                                                                                                                                           // Controla la visibilidad del cuadro desplegable
         user: {
@@ -23,7 +24,11 @@ new Vue({
             correo: '',
             telefono: ''
         },
-          categoriaSeleccionada: ''
+        categoriaSeleccionada: '',
+        busqueda: '',
+        comentariosFiltrados: [],
+        nuevoComentario: ''
+        
     },
     methods: {
         buscar() { //método que obtiene toda la informacion de la BD (Negocios y categorias)
@@ -42,6 +47,7 @@ new Vue({
                             console.log(json)
                             t.negocios = json.negocios
                             t.categorias = json.categorias
+                            t.Valoraciones = json.Valoraciones
                         }
                     })
                     .catch(function (err) {
@@ -121,7 +127,7 @@ new Vue({
                     });
             });
         },
-        openModal(opc) {
+        openModal(opc,aux) {
             var t = this
             switch (opc) {
                 case 1: //Abrir Modal del registro como usuario
@@ -129,6 +135,11 @@ new Vue({
                     break;
                 case 2: //Abrir Modal de Registrar el negocio
                     modalElement = document.getElementById('registroNegocioModal');
+                    break;
+                case 3: //Abrir Modal de Registrar el negocio
+                    modalElement = document.getElementById('valoracionesModal');                    
+                    t.comentariosFiltrados = t.Valoraciones.filter(c => c.idNegocio === aux); 
+                    console.log(t.comentariosFiltrados)
                     break;
             }
             if (modalElement) {
@@ -146,15 +157,23 @@ new Vue({
             var t = this
             console.log(cat)
             t.categoriaSeleccionada = cat
+        },
+        enviarValoracion(){
+            var t = this
+            console.log(t.nuevoComentario)
+            t.nuevoComentario = ''
         }
+
     },
     computed:{
-        negociosFiltrados(){
+        negociosFiltrados() {
             var t = this
-            if (t.categoriaSeleccionada === '') {
-                return t.negocios; // Muestra todos si no hay una categoría seleccionada
-            }
-            return t.negocios.filter(negocio => negocio.categoria === this.categoriaSeleccionada);
+            // Filtra por categoría y por término de búsqueda
+            return t.negocios.filter(negocio => {
+                const coincideCategoria = t.categoriaSeleccionada === '' || negocio.categoria === t.categoriaSeleccionada;
+                const coincideBusqueda = negocio.nombreNegocio.toLowerCase().includes(t.busqueda.toLowerCase());
+                return coincideCategoria && coincideBusqueda;
+            });
         }
     },
     mounted() {// cuando termina de cargar la página

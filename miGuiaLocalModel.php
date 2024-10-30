@@ -12,7 +12,8 @@ switch ($opc) {
     case 'buscar':
         try {
             // Consulta SQL a los Negocios existentes
-            $sqlNegocios = "SELECT id, categoria, nombreNegocio, servicioDomicilio, domicilio, telefono, ubicacionMaps, rutaImagenNegocio FROM mglNegocios";
+            $sqlNegocios = "SELECT N.id, N.categoria, N.nombreNegocio, N.servicioDomicilio, N.domicilio, N.telefono, N.ubicacionMaps, N.rutaImagenNegocio, V.calificacion FROM mglNegocios N
+            inner join mglValoraciones v  on v.idNegocio = n.id";
             $stmt = $conn->prepare($sqlNegocios);
             $stmt->execute();
             $negocios = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -23,11 +24,18 @@ switch ($opc) {
             $stmt2->execute();
             $categorias = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
+            //Consulta de los comentarios, opionios y/o valoraciones
+            $sqlValoraciones = "SELECT idNegocio, categoria, nombreNegocio, calificacion, comentarios, fecha, usuario FROM mglValoraciones";
+            $stmt3 = $conn->prepare($sqlValoraciones);
+            $stmt3->execute();
+            $Valoraciones = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+
             // Enviar la respuesta en formato JSON
             echo json_encode([
                 "status" => "OK",
                 "negocios" => $negocios,
-                "categorias" => $categorias
+                "categorias" => $categorias,
+                "Valoraciones" => $Valoraciones
             ]);
         } catch (PDOException $e) {
             echo json_encode([

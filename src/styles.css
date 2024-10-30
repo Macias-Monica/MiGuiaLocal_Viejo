@@ -252,3 +252,18 @@ main {
   justify-content: center;
   align-items: center;
 }
+
+/*VALORACIONES*/
+.rating {
+  font-size: 1.5rem; /* Tamaño de las estrellas */
+  color: #ccc; /* Color de las estrellas no seleccionadas */
+}
+
+.star {
+  cursor: pointer;
+  color: gray; /* Color de las estrellas seleccionadas */
+}
+
+.star.filled {
+  color: gold; /* Color de las estrellas seleccionadas */
+}
